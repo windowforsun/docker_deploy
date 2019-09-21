@@ -1,48 +1,49 @@
 version: '3.7'
 
 services:
-#  jar-build:
-#    build:
-#      context: ./../
-#      dockerfile: docker/maven/Dockerfile
-#    depends_on:
-#      - redis
-#    networks:
-#      - web-redis
-#    volumes:
-#      - ./jar:/build/target
-#    restart: on-failure
   web:
     build:
       context: ./../
-#      dockerfile: web/Dockerfile
       dockerfile: docker/web/Dockerfile
+    deploy:
+      replicas: 5
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpu: "0.1"
+          memory: 50m
     ports:
-      - "8080:8080"
+      - "8010:8080"
     networks:
       - web-redis
     depends_on:
       - redis
-#      - jar-build
-#    volumes:
-#      - ./jar:/app
     restart: on-failure
   redis:
     build:
       context: .
       dockerfile: redis/Dockerfile
+    deploy:
+      placement:
+        constraints: [node.role == manager]
     ports:
       - "6377:6377"
     networks:
       - web-redis
     volumes:
       - "./../redis-data:/data"
-#    healthcheck:
-#     test: ["CMD", "curl", "-f", "http://localhost:6377"]
-#     interval: 30s
-#     timeout: 10s
-#     retries: 5
-#    start:
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+    - "8080:8080"
+    volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - web-redis
 
 
 
