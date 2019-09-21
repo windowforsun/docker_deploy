@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 public class HelloController {
     @GetMapping("/")
     public String root() {
-        return "hello ~ spring boot docker jar 222~~~";
+        return "hello ~ spring boot docker jar 33333~~~";
     }
 
     @GetMapping("/echo/{str}")
