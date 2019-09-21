@@ -22,6 +22,8 @@ services:
       - web-redis
     volumes:
       - "./../redis-data:/data"
+    sysctls:
+      net.core.somaxconn: '511'
 
 
 
