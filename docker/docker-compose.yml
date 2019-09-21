@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+#  jar-build:
+#    build:
+#      context: ./../
+#      dockerfile: docker/maven/Dockerfile
+#    depends_on:
+#      - redis
+#    networks:
+#      - web-redis
+#    volumes:
+#      - ./jar:/build/target
+#    restart: on-failure
+  web:
+    build:
+      context: ./../
+#      dockerfile: web/Dockerfile
+      dockerfile: docker/web/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - web-redis
+    depends_on:
+      - redis
+#      - jar-build
+#    volumes:
+#      - ./jar:/app
+    restart: on-failure
+  redis:
+    build:
+      context: .
+      dockerfile: redis/Dockerfile
+    ports:
+      - "6377:6377"
+    networks:
+      - web-redis
+    volumes:
+      - "./../redis-data:/data"
+#    healthcheck:
+#     test: ["CMD", "curl", "-f", "http://localhost:6377"]
+#     interval: 30s
+#     timeout: 10s
+#     retries: 5
+#    start:
+
+
+
+networks:
+  web-redis:
